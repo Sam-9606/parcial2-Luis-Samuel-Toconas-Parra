@@ -1,0 +1,56 @@
+CREATE DATABASE "Consultorio"
+    WITH
+    OWNER = postgres
+    ENCODING = 'UTF8'
+    LOCALE_PROVIDER = 'libc'
+    CONNECTION LIMIT = -1
+    IS_TEMPLATE = False;
+
+-- Tabla de roles con datos
+CREATE TABLE roles (
+    rol_id SERIAL PRIMARY KEY,
+    name VARCHAR(45) NOT NULL
+);
+INSERT INTO roles (name) VALUES
+('ADMIN'), ('MEDICO'), ('PACIENTE');
+
+-- Tabla donde se almacenaran todos lo usuarios
+CREATE TABLE users (
+    user_id SERIAL PRIMARY KEY,
+    name VARCHAR(45) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    last_name VARCHAR(45),
+    password VARCHAR(64) NOT NULL,
+    role_id INT REFERENCES roles(rol_id)
+);
+
+
+-- tabla de medicos
+CREATE TABLE medics (
+    medic_id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(user_id)
+);
+
+-- tabla de pacientes
+CREATE TABLE patients (
+    patient_id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(user_id)
+);
+
+-- tabla de consultorios
+CREATE TABLE consulting_room (
+    number_id SERIAL PRIMARY KEY,
+    number INT NOT NULL UNIQUE
+);
+
+-- tabla de consultas
+CREATE TABLE appointment (
+    appo_id SERIAL PRIMARY KEY,
+    motivo VARCHAR(100) NOT NULL,
+    hora_inicio TIME NOT NULL,
+    hora_fin TIME,
+    fecha DATE NOT NULL,
+    patient_id INT REFERENCES patients(patient_id),
+    medic_id INT REFERENCES medics(medic_id),
+    consulting_room INT REFERENCES consulting_room(number_id)
+);
